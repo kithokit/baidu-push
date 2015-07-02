@@ -10,8 +10,8 @@ var assert = require('assert'),
 function Push(options) {
   this.apiKey = options.apiKey;
   this.secretKey = options.secretKey;
-  this.host = options.host || 'channel.api.duapp.com';
-  this.path = options.path || '/rest/2.0/channel/';
+  this.host = options.host || 'api.tuisong.baidu.com';
+  this.path = options.path || '/rest/3.0/';
   this.timeout = options.timeout || 5000; // 5s
 
   if (options.hasOwnProperty('agent')) {
@@ -30,7 +30,6 @@ Push.prototype.request = function(path, bodyParams, callback) {
 
   bodyParams.apikey = this.apiKey;
   bodyParams.sign = generateSign('POST', 'http://' + host + path, bodyParams, secretKey);
-
   var bodyArgsArray = [];
 
   for (var i in bodyParams) {
@@ -44,7 +43,7 @@ Push.prototype.request = function(path, bodyParams, callback) {
     method: 'POST',
     headers: {
       'Content-Length': bodyString.length,
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
     }
   };
 
@@ -113,11 +112,11 @@ Push.prototype.queryBindList = function(options, callback) {
 Push.prototype.pushMsg = function(options, callback) {
   options = options || {};
   callback = callback || noop;
-  var path = this.path + 'channel';
-
-  options.method = 'push_msg';
-  options.messages = JSON.stringify(options.messages);
-  options.msg_keys = JSON.stringify(options.msg_keys);
+  var path = this.path + 'push/single_device';
+  options.msg_type = options.msg_type;
+  options.msg = JSON.stringify(options.msg);
+  options.channel_id = options.channel_id;
+  options.device_type = '3';
   options.timestamp = getTimestamp();
 
   this.request(path, options, callback);
